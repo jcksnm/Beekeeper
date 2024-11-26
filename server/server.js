@@ -10,6 +10,7 @@ async function startGame() {
     const answers = await scrapeAnswers();
     let grid = createGrid(answers);
     let twoLetterList = createTwoLetterList(answers);
+    let guessedWords = new Set();  // To track guessed words
 
     console.log("Initial Grid:");
     displayGrid(grid);
@@ -17,20 +18,27 @@ async function startGame() {
     displayTwoLetterList(twoLetterList);
 
     rl.on('line', (input) => {
-        if (!answers.some(answer => answer.word === input)) {
-            console.log("Not in word list.");
-        } else {
-            console.log("Correct!");
+        // Split input into individual words
+        const words = input.split(' ');
 
-            const { updatedGrid, updatedTwoLetterList } = updateGridAndTwoLetterList(grid, twoLetterList, input);
-            grid = updatedGrid;
-            twoLetterList = updatedTwoLetterList;
+        words.forEach(word => {
+            if (!guessedWords.has(word)) {
+                console.log(`${word} Correct!`);
 
-            console.log("\nUpdated Grid:");
-            displayGrid(grid);
-            console.log("\nUpdated Two-Letter List:");
-            displayTwoLetterList(twoLetterList);
-        }
+                // Update the grid and two-letter list for the current word
+                const { updatedGrid, updatedTwoLetterList } = updateGridAndTwoLetterList(grid, twoLetterList, word);
+                grid = updatedGrid;
+                twoLetterList = updatedTwoLetterList;
+
+                // Add the word to the guessed set
+                guessedWords.add(word);
+            }
+        });
+
+        console.log("\nUpdated Grid:");
+        displayGrid(grid);
+        console.log("\nUpdated Two-Letter List:");
+        displayTwoLetterList(twoLetterList);
     });
 }
 
