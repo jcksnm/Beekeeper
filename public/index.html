@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spelling Bee Game</title>
+    <style>
+        /* Add basic styling */
+        table {
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            padding: 8px;
+            border: 1px solid black;
+            text-align: center;
+        }
+        input {
+            padding: 8px;
+            font-size: 16px;
+            margin-right: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .container {
+            width: 80%;
+            margin: auto;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Spelling Bee Game</h1>
+
+        <!-- Display Grid -->
+        <h2>Grid:</h2>
+        <table id="grid">
+            <!-- Grid will be populated dynamically -->
+        </table>
+
+        <!-- Display Two Letter List -->
+        <h2>Two-Letter Word List:</h2>
+        <div id="twoLetterList">
+            <!-- Two-letter list will be populated dynamically -->
+        </div>
+
+        <!-- User Input -->
+        <h2>Enter a word:</h2>
+        <input type="text" id="wordInput" placeholder="Enter word">
+        <button onclick="submitGuess()">Submit</button>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
