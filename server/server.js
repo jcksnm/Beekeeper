@@ -1,59 +1,72 @@
+const express = require('express');
 const { createGrid, createTwoLetterList } = require('./util/gridUtils');
 const scrapeAnswers = require('./scraper/scraper');
-const readline = require('readline');
-const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout
+const path = require('path');
+
+const app = express();
+const port = 3000;
+
+// Store game state in memory
+let grid;
+let twoLetterList;
+let guessedWords = new Set();
+
+// Middleware to parse JSON requests
+app.use(express.json());
+
+// Serve static files from the correct path
+app.use(express.static(path.join(__dirname, '../public'))); // Adjusted path
+
+// Endpoint to start the game
+app.get('/start', async (req, res) => {
+    const answers = await scrapeAnswers();
+    grid = createGrid(answers);
+    twoLetterList = createTwoLetterList(answers);
+
+    // Clear the guessed words set
+    guessedWords = new Set();
+
+    res.json({
+        message: 'Game started!',
+        grid: grid,
+        twoLetterList: twoLetterList
+    });
 });
 
-async function startGame() {
-    const answers = await scrapeAnswers();
-    let grid = createGrid(answers);
-    let twoLetterList = createTwoLetterList(answers);
-    let guessedWords = new Set(); 
+// Endpoint to submit words
+app.post('/submit', (req, res) => {
+    const { words } = req.body;
+    if (!Array.isArray(words)) {
+        return res.status(400).json({ message: 'Words should be an array of strings.' });
+    }
 
-    console.log("Initial Grid:");
-    displayGrid(grid);
-    console.log("\nInitial Two-Letter List:");
-    displayTwoLetterList(twoLetterList);
+    words.forEach(word => {
+        const wordUpper = word.toUpperCase();
 
-    rl.on('line', (input) => {
-        const words = input.split(' ').map(word => word.toUpperCase());
-
-        words.forEach(word => {
-            if (!guessedWords.has(word)) {
-                console.log(`${word} Correct!`);
-
-                const { updatedGrid, updatedTwoLetterList } = updateGridAndTwoLetterList(grid, twoLetterList, word);
-                grid = updatedGrid;
-                twoLetterList = updatedTwoLetterList;
-
-                guessedWords.add(word);
-            }
-        });
-
-        console.log("\nUpdated Grid:");
-        displayGrid(grid);
-        console.log("\nUpdated Two-Letter List:");
-        displayTwoLetterList(twoLetterList);
+        if (!guessedWords.has(wordUpper)) {
+            const { updatedGrid, updatedTwoLetterList } = updateGridAndTwoLetterList(grid, twoLetterList, wordUpper);
+            grid = updatedGrid;
+            twoLetterList = updatedTwoLetterList;
+            guessedWords.add(wordUpper);
+        }
     });
-}
 
-function displayGrid(grid) {
-    grid.forEach(row => {
-        console.log(row.join('\t'));
+    res.json({
+        message: 'Words submitted!',
+        grid: grid,
+        twoLetterList: twoLetterList
     });
-}
+});
 
-function displayTwoLetterList(twoLetterList) {
-    Object.keys(twoLetterList).forEach(letter => {
-        const line = twoLetterList[letter]
-            .map(item => `${item.combo}-${item.count}`)
-            .join(' ');
-        console.log(line);
+// Endpoint to get the current grid and two-letter list
+app.get('/status', (req, res) => {
+    res.json({
+        grid: grid,
+        twoLetterList: twoLetterList
     });
-}
+});
 
+// Utility to update grid and two-letter list
 function updateGridAndTwoLetterList(grid, twoLetterList, word) {
     const firstLetter = word[0];
     const wordLength = word.length;
@@ -90,4 +103,7 @@ function updateGridAndTwoLetterList(grid, twoLetterList, word) {
     return { updatedGrid: grid, updatedTwoLetterList: twoLetterList };
 }
 
-startGame();
+// Start the server
+app.listen(port, () => {
+    console.log(`Server is running on http://localhost:${port}`);
+});
