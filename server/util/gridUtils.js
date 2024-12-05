@@ -43,9 +43,9 @@ function createGrid(answers) {
                         columnTotal += letterLengthCount[row]?.[length] || 0;
                     }
                 });
-                sumRow.push(columnTotal);
+                sumRow.push(columnTotal || '-');
             });
-            sumRow.push(totalWords);
+            sumRow.push(totalWords || '-');
             grid[rowIndex] = sumRow;
         } else {
             grid[rowIndex].push(row);
@@ -53,11 +53,11 @@ function createGrid(answers) {
 
             validLengths.forEach(length => {
                 let count = letterLengthCount[row]?.[length] || 0;
-                grid[rowIndex].push(count);
+                grid[rowIndex].push(count || '-');
                 rowTotal += count;
             });
 
-            grid[rowIndex].push(rowTotal);
+            grid[rowIndex].push(rowTotal || '-');
             totalWords += rowTotal;
         }
     });

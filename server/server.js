@@ -67,7 +67,7 @@ app.get('/status', (req, res) => {
 });
 
 // Utility to update grid and two-letter list
-function updateGridAndTwoLetterList(grid, twoLetterList, word) {
+/* function updateGridAndTwoLetterList(grid, twoLetterList, word) {
     const firstLetter = word[0];
     const wordLength = word.length;
 
@@ -92,6 +92,46 @@ function updateGridAndTwoLetterList(grid, twoLetterList, word) {
 
     grid[grid.length - 1][grid[0].length - 1] = newSum;
 
+    const firstTwoLetters = word.substring(0, 2);
+    if (twoLetterList[firstLetter]) {
+        const index = twoLetterList[firstLetter].findIndex(item => item.combo === firstTwoLetters);
+        if (index !== -1) {
+            twoLetterList[firstLetter][index].count--;
+        }
+    }
+
+    return { updatedGrid: grid, updatedTwoLetterList: twoLetterList };
+} */
+
+
+function updateGridAndTwoLetterList(grid, twoLetterList, word) {
+    const firstLetter = word[0];
+    const wordLength = word.length;
+
+    const rowIndex = grid.findIndex(row => row[0] === firstLetter);
+    const colIndex = grid[0].indexOf(wordLength);
+
+    if (rowIndex !== -1 && colIndex !== -1) {
+        // Decrement cell value and replace 0 with '-'
+        grid[rowIndex][colIndex] = Math.max(grid[rowIndex][colIndex] - 1, 0) || '-';
+        grid[grid.length - 1][colIndex] = Math.max(grid[grid.length - 1][colIndex] - 1, 0) || '-';
+        grid[rowIndex][grid[0].length - 1] = Math.max(grid[rowIndex][grid[0].length - 1] - 1, 0) || '-';
+    }
+
+    // Update total sum at the bottom-right
+    let newSum = 0;
+    grid[grid.length - 1].forEach((value, idx) => {
+        if (idx < grid[0].length - 1) {
+            const numValue = Number(value);
+            if (!isNaN(numValue)) {
+                newSum += numValue;
+            }
+        }
+    });
+
+    grid[grid.length - 1][grid[0].length - 1] = newSum || '-';
+
+    // Update two-letter list
     const firstTwoLetters = word.substring(0, 2);
     if (twoLetterList[firstLetter]) {
         const index = twoLetterList[firstLetter].findIndex(item => item.combo === firstTwoLetters);
