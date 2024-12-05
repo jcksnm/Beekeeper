@@ -17,8 +17,38 @@ app.use(express.json());
 // Serve static files from the correct path
 app.use(express.static(path.join(__dirname, '../public'))); // Adjusted path
 
-// Endpoint to start the game
-app.get('/start', async (req, res) => {
+async function initializeGame() {
+    const answers = await scrapeAnswers();
+    grid = createGrid(answers);
+    twoLetterList = createTwoLetterList(answers);
+};
+
+initializeGame().then(() => {
+    app.listen(port, () => {
+        console.log(`Server is running on http://localhost:${port}`);
+    });
+});
+
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
+});
+
+app.get('/start', (req, res) => {
+    res.json({
+        grid: grid,
+        twoLetterList: twoLetterList,
+    });
+});
+
+app.get('/status', (req, res) => {
+    res.json({
+        grid: grid,
+        twoLetterList: twoLetterList
+    });
+});
+
+
+/* app.get('/start', async (req, res) => {
     const answers = await scrapeAnswers();
     grid = createGrid(answers);
     twoLetterList = createTwoLetterList(answers);
@@ -31,7 +61,7 @@ app.get('/start', async (req, res) => {
         grid: grid,
         twoLetterList: twoLetterList
     });
-});
+}); */
 
 // Endpoint to submit words
 app.post('/submit', (req, res) => {
@@ -58,13 +88,12 @@ app.post('/submit', (req, res) => {
     });
 });
 
-// Endpoint to get the current grid and two-letter list
-app.get('/status', (req, res) => {
+/* app.get('/status', (req, res) => {
     res.json({
         grid: grid,
         twoLetterList: twoLetterList
     });
-});
+}); */
 
 // Utility to update grid and two-letter list
 /* function updateGridAndTwoLetterList(grid, twoLetterList, word) {
@@ -144,6 +173,6 @@ function updateGridAndTwoLetterList(grid, twoLetterList, word) {
 }
 
 // Start the server
-app.listen(port, () => {
+/* app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);
-});
+}); */

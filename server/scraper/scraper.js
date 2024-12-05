@@ -26,7 +26,8 @@ module.exports = scrapeAnswers; */
 const puppeteer = require('puppeteer');
 
 async function scrapeAnswers() {
-    const browser = await puppeteer.launch({ headless: false, args: ['--no-sandbox', '--disable-setuid-sandbox'] }); // Launch with more options
+    //const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox'] }); // Launch with more options
+    const browser = await puppeteer.launch();
     const page = await browser.newPage();
 
     try {
