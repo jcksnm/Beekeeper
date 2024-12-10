@@ -2,36 +2,59 @@ body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #f9f9f9;
-    color: #333;
+    box-sizing: border-box;
+}
+
+.content-container {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin: 0;
+}
+
+#grid-output, #two-letter-list-output {
+    margin: 0 2%;
+}
+
+#grid-output {
+    width: 45%;
+    padding: 10px;
+    box-sizing: border-box;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#grid-output table {
+    width: 50%;
+    margin-left: auto;
+    table-layout: fixed;
+    border-spacing: 0;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 2px;
+    text-align: center;
+    width: 1%;
+}
+
+#two-letter-list-output {
+    width: 45%;
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+#submit-container {
+    margin-top: 20px;
     text-align: center;
 }
 
-#game-container {
-    max-width: 800px;
-    margin: 50px auto;
-    padding: 20px;
-    background-color: white;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+textarea {
+    width: 80%;
+    padding: 8px;
 }
 
-#game-area {
-    margin-top: 20px;
-}
-
-#grid-display, #two-letter-list-display {
-    margin-bottom: 20px;
-    text-align: left;
-}
-
-pre {
-    padding: 10px;
-    background: #f0f0f0;
-    border-radius: 4px;
-    overflow-x: auto;
-}
-
-#input-area {
+button {
+    padding: 8px 16px;
     margin-top: 10px;
 }
