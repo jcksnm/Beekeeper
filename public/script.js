@@ -63,12 +63,27 @@ document.getElementById('submit-words').addEventListener('click', async () => {
 function updateGrid(grid) {
     const gridOutput = document.getElementById('grid-output');
     const table = document.createElement('table');
+    
+    const lastRowIndex = grid.length - 1;
+    const lastColumnIndex = grid[0].length - 1;
 
     grid.forEach((row, rowIndex) => {
         const tr = document.createElement('tr');
-        row.forEach((cell) => {
+        row.forEach((cell, cellIndex) => {
             const cellElement = document.createElement(rowIndex === 0 ? 'th' : 'td');
             cellElement.textContent = cell;
+
+            if (rowIndex !== 0 && cellIndex === 0) {
+                cellElement.textContent = `${cell}:`;
+                cellElement.style.fontWeight = 'bold';
+            } else {
+                cellElement.textContent = cell;
+            }
+
+            if (cellIndex === lastColumnIndex || rowIndex === lastRowIndex) {
+                cellElement.style.fontWeight = 'bold';
+            }
+
             tr.appendChild(cellElement);
         });
         table.appendChild(tr);
