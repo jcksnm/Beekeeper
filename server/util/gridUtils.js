@@ -1,13 +1,3 @@
-const scrapeAnswers = require('../scraper/scraper');
-
-async function getAnswers() {
-    try {
-        return await scrapeAnswers();
-    } catch (error) {
-        console.error('Error creating grid:', error);
-    }
-}
-
 function createGrid(answers) {
     let letterLengthCount = {};
     answers.forEach(answer => {
