@@ -15,6 +15,9 @@ window.addEventListener('DOMContentLoaded', async () => {
 });
 
 document.getElementById('submit-words').addEventListener('click', async () => {
+    const alertContainer = document.getElementById('alert-container');
+    alertContainer.innerHTML = ''; 
+
     try {
         let input = document.getElementById('word-input').value.trim();
         console.log("Raw input:", input);
@@ -24,6 +27,7 @@ document.getElementById('submit-words').addEventListener('click', async () => {
 
         if (!input) {
             console.error("Input is empty after replacing newlines and trimming.");
+            showAlert('Invalid input', 'danger');
             return;
         }
 
@@ -32,6 +36,7 @@ document.getElementById('submit-words').addEventListener('click', async () => {
 
         if (words.length === 0) {
             console.error("No valid words to submit.");
+            showAlert('Invalid input', 'danger');
             return;
         }
 
@@ -45,16 +50,20 @@ document.getElementById('submit-words').addEventListener('click', async () => {
 
         if (!response.ok) {
             console.error("Failed to submit words. Server response:", response.status, await response.text());
+            showAlert('Invalid input', 'danger');
             return;
         }
 
         const data = await response.json();
         console.log("Server response data:", data);
 
-        updateGrid(data.grid);
-        updateTwoLetterList(data.twoLetterList);
-
-        console.log("Submission completed successfully!");
+        if (data.message === 'Valid') {
+            updateGrid(data.grid);
+            updateTwoLetterList(data.twoLetterList);
+            showAlert('Words submitted successfully!', 'success');
+        } else {
+            showAlert('Invalid words. Please try again.', 'danger');
+        }
     } catch (error) {
         console.error("An error occurred during submission:", error);
     }
@@ -106,4 +115,15 @@ function updateTwoLetterList(twoLetterList) {
         div.textContent = line;
         twoLetterListOutput.appendChild(div);
     });
+}
+
+function showAlert(message, type){
+    const alertContainer = document.getElementById('alert-container');
+    const alert = document.createElement('div');
+    alert.className = `alert alert-${type} alert-dismissible fade show`;
+    alert.role = 'alert';
+    alert.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>`;
+    alertContainer.appendChild(alert);
 }

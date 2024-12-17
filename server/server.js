@@ -8,6 +8,7 @@ const port = 3000;
 
 let grid;
 let twoLetterList;
+let validAnswers = new Set();
 let guessedWords = new Set();
 
 app.use(express.json());
@@ -17,6 +18,7 @@ async function initializeGame() {
     const answers = await scrapeAnswers();
     grid = createGrid(answers);
     twoLetterList = createTwoLetterList(answers);
+    validAnswers = new Set(answers.map(entry => entry.word.toUpperCase()));
 };
 
 initializeGame().then(() => {
@@ -45,14 +47,18 @@ app.get('/status', (req, res) => {
 
 app.post('/submit', (req, res) => {
     const { words } = req.body;
+
     if (!Array.isArray(words)) {
         return res.status(400).json({ message: 'Words should be an array of strings.' });
     }
 
+    const invalidWords = [];
     words.forEach(word => {
         const wordUpper = word.toUpperCase();
 
-        if (!guessedWords.has(wordUpper)) {
+        if (!isValidAnswer(wordUpper)) {
+            invalidWords.push(wordUpper)
+        } else if (!guessedWords.has(wordUpper)) {
             const { updatedGrid, updatedTwoLetterList } = updateGridAndTwoLetterList(grid, twoLetterList, wordUpper);
             grid = updatedGrid;
             twoLetterList = updatedTwoLetterList;
@@ -60,12 +66,23 @@ app.post('/submit', (req, res) => {
         }
     });
 
-    res.json({
-        message: 'Words submitted!',
-        grid: grid,
-        twoLetterList: twoLetterList
-    });
+    if (invalidWords.length > 0){
+        return res.json({
+            message: 'Invalid',
+            invalidWords: invalidWords
+        });
+    } else {
+        return res.json({
+            message: 'Valid',
+            grid: grid,
+            twoLetterList: twoLetterList
+        });
+    }
 });
+
+function isValidAnswer(word) {
+    return validAnswers.has(word);
+}
 
 function updateGridAndTwoLetterList(grid, twoLetterList, word) {
     const firstLetter = word[0];
