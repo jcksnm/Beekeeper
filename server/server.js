@@ -52,7 +52,8 @@ app.post('/submit', (req, res) => {
         if (!isValidAnswer(wordUpper)) {
             invalidWords.push(wordUpper)
         } else if (!guessedWords.has(wordUpper)) {
-            const { updatedGrid, updatedTwoLetterList } = updateGridAndTwoLetterList(grid, twoLetterList, wordUpper);
+            const updatedGrid = updateGrid(grid, wordUpper);
+            const updatedTwoLetterList = updateTwoLetterList(twoLetterList, word);
             grid = updatedGrid;
             twoLetterList = updatedTwoLetterList;
             guessedWords.add(wordUpper);
@@ -77,7 +78,7 @@ function isValidAnswer(word) {
     return validAnswers.has(word);
 }
 
-function updateGridAndTwoLetterList(grid, twoLetterList, word) {
+function updateGrid(grid, word) {
     const firstLetter = word[0];
     const wordLength = word.length;
 
@@ -101,8 +102,11 @@ function updateGridAndTwoLetterList(grid, twoLetterList, word) {
     });
 
     grid[grid.length - 1][grid[0].length - 1] = newSum || '-';
+    return grid;
+}
 
-    //two-letter list
+function updateTwoLetterList(twoLetterList, word){
+    const firstLetter = word[0];
     const firstTwoLetters = word.substring(0, 2);
     if (twoLetterList[firstLetter]) {
         const index = twoLetterList[firstLetter].findIndex(item => item.combo === firstTwoLetters);
@@ -111,5 +115,5 @@ function updateGridAndTwoLetterList(grid, twoLetterList, word) {
         }
     }
 
-    return { updatedGrid: grid, updatedTwoLetterList: twoLetterList };
+    return twoLetterList;
 }
