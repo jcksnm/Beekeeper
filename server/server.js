@@ -31,13 +31,6 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-app.get('/start', (req, res) => {
-    res.json({
-        grid: grid,
-        twoLetterList: twoLetterList,
-    });
-});
-
 app.get('/status', (req, res) => {
     res.json({
         grid: grid,
