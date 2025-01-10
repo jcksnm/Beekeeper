@@ -52,10 +52,8 @@ app.post('/submit', (req, res) => {
         if (!isValidAnswer(wordUpper)) {
             invalidWords.push(wordUpper)
         } else if (!guessedWords.has(wordUpper)) {
-            const updatedGrid = updateGrid(grid, wordUpper);
-            const updatedTwoLetterList = updateTwoLetterList(twoLetterList, word);
-            grid = updatedGrid;
-            twoLetterList = updatedTwoLetterList;
+            grid = updateGrid(grid, wordUpper);
+            twoLetterList = updateTwoLetterList(twoLetterList, wordUpper);
             guessedWords.add(wordUpper);
         }
     });
